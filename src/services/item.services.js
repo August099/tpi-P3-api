@@ -87,15 +87,26 @@ export const deleteItem = async (req, res) => {
     return res.status(404).send({ errors: {itemError: "Producto no encontrado"} });
   }
 
-  await item.destroy();
-  
-  res.send(`Producto con id ${id} eliminado`);
+  try {
+    await item.destroy();
+    res.send(`Producto con id ${id} eliminado`);
+  } catch (error) {
+    console.error(error); // 👈 esto te va a mostrar el mensaje real
+    res.status(500).json({ message: "Error al eliminar el producto" });
+  }
 };
 
 export const findItemsByCategories = async (req, res) => {
   const { categoryIds } = req.query;
 
-  const ids = categoryIds.split(",").map((c) => parseInt(c));
+  const ids = categoryIds
+                .split(",")
+                .filter((i) => i !== '')
+                .map((c) => parseInt(c));
+
+  if (ids.length === 0) {
+    return res.json([]);
+  }
 
   const items = await Item.findAll({
     include: {

@@ -13,7 +13,7 @@ export const findQuestionsByItem = async (req, res) => {
 
   const questions = await Question.findAll({
     where: { itemId },
-    include: { model: User, attributes: ["id", "email"] }
+    include: { model: User, attributes: ["id", "email", "name"] }
   });
 
   res.json(questions);
