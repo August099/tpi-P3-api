@@ -5,15 +5,27 @@ import {
   deleteItem,
   findItem,
   findItems,
+  findItemsByCategories,
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory
 } from "../services/item.services.js";
-//import { verifyToken } from "../middlewares/verifyToken.js";
+import { verifyToken, verifyAdmin } from "../middlewares/auth.middleware.js";
 
 const router =  Router();
+router.get("/items/by-categories", verifyToken, findItemsByCategories);
+router.get("/categories", verifyToken, getCategories);
 
-router.get("/items", findItems);
-router.get("/items/:id", findItem);
-router.post("/items", createItem);
-router.put("/items/:id", updateItem);
-router.delete("/items/:id", deleteItem);
+router.post("/categories", verifyToken, verifyAdmin, createCategory);
+router.put("/categories/:id", verifyToken, verifyAdmin, updateCategory);
+router.delete("/categories/:name", verifyToken, verifyAdmin, deleteCategory);
+
+router.get("/items", verifyToken, findItems);
+router.get("/items/:id", verifyToken, findItem);
+
+router.post("/items", verifyToken, verifyAdmin, createItem);
+router.put("/items/:id", verifyToken, verifyAdmin, updateItem);
+router.delete("/items/:id", verifyToken, verifyAdmin, deleteItem);
 
 export default router

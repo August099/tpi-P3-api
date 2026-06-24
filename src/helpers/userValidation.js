@@ -13,6 +13,14 @@ export const validateEmail = (email) => {
     return emailRegex.test(email);
 };
 
+export const validatePreferences = (preferences) => {
+    if (typeof preferences !== "object" || Array.isArray(preferences) || preferences === null) {
+        return false
+    }
+
+    return true
+}
+
 export const validatePassword = (
 password,
 minLenght,
@@ -35,11 +43,11 @@ export const validateLoginUser = (body) => {
 
     const { email, password } = body;
 
-    if (!email || !validateEmail(email)) errors.email = "Email invalido.";
-    if (!password || !validatePassword(password, 7, null, true, true)) errors.password = "Contraseña invalida.";
+    if (!email || !validateEmail(email)) errors.emailError = "Email invalido.";
+    if (!password || !validatePassword(password, 7, null, true, true)) errors.passwordError = "Contraseña invalida.";
 
 
-    return result;
+    return errors;
 };
 
 export const validateRegisterUser = (body) => {
@@ -47,10 +55,10 @@ export const validateRegisterUser = (body) => {
 
     const errors = {};
 
-    if (!name || !validateString(name, 4, 20)) errors.name = "Nombre invalido, debe contener de 4 a 20 caracteres."
-    if (!email || !validateEmail(email)) errors.email = "Email invalido."
-    if (!password || !validatePassword(password, 7, null, true, true)) errors.password = "Contraseña invalida. Debe tener al menos 7 carcteres, una mayuscula y un numero."
-    if (!repeatPassword || repeatPassword != password) errors.repeatPassword = "Asegure que las contraseñas sean iguales."
+    if (!name || !validateString(name, 4, 20)) errors.nameError = "Nombre invalido, debe contener de 4 a 20 caracteres."
+    if (!email || !validateEmail(email)) errors.emailError = "Email invalido."
+    if (!password || !validatePassword(password, 7, null, true, true)) errors.passwordError = "Contraseña invalida. Debe tener al menos 7 carcteres, una mayuscula y un numero."
+    if (!repeatPassword || repeatPassword != password) errors.repeatPasswordError = "Asegure que las contraseñas sean iguales."
 
     return errors;
 };

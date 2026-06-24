@@ -2,9 +2,10 @@ import express from "express";
 import { PORT } from "./config.js";
 import itemRoutes from "./routes/items.routes.js"
 import authRoutes from "./routes/auth.routes.js";
+import cartRoutes from "./routes/cart.routes.js"
+import questionRoutes from "./routes/question.routes.js"
 import { sequelize } from "../db.js";
-import "./models/Item.js"
-import "./models/User.js";
+import "./models/associations.js"
 
 const app = express()
 
@@ -19,10 +20,13 @@ try {
     app.listen(PORT)
     app.use(itemRoutes)
     app.use(authRoutes)
+    app.use(cartRoutes)
+    app.use(questionRoutes)
 
-    await sequelize.sync({ alter: true })
+    await sequelize.sync()
 
     console.log(`Server listening on port ${PORT}`)
 } catch (error) {
     console.log(`There was an error on initialization`)
+    console.error(error)
 }

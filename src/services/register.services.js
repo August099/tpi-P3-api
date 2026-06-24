@@ -3,10 +3,10 @@ import bcrypt from "bcrypt";
 import { validateRegisterUser } from "../helpers/userValidation.js";
 
 export const registerUser = async (req, res) => {
-  const result = validateRegisterUser(req.body);
+  const errors = validateRegisterUser(req.body);
 
-  if (Object.keys(result).length != 0) {
-    return res.status(400).send({ errors: result });
+  if (Object.keys(errors).length != 0) {
+    return res.status(400).send(errors);
   }
   
   const { name, email, password } = req.body;
@@ -18,7 +18,7 @@ export const registerUser = async (req, res) => {
   });
 
   if (user) {
-    return res.status(400).send({ message: "Usuario existente" });
+    return res.status(400).send({ errors: {userError: "Usuario existente"} });
   }
 
   const saltRound = 10;
@@ -27,9 +27,9 @@ export const registerUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   const newUser = await User.create({
-    name: name,
+    name,
     email,
-    password: hashedPassword,
+    password: hashedPassword
   });
 
   res.json(newUser.id);

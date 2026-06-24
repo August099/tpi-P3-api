@@ -7,40 +7,33 @@ export const Item = sequelize.define("item", {
         primaryKey: true,
         autoIncrement: true
     },
-    title: {
+    name: {
         type: DataTypes.STRING,
-        allowNull: false
-    },
-    price: {
-        type: DataTypes.FLOAT,
         allowNull: false
     },
     description: {
         type: DataTypes.TEXT
     },
-    imageUrl: {
+    image: {
         type: DataTypes.STRING,
     },
-    tags: {
-        type: DataTypes.TEXT,
-        defaultValue: "[]",
-        allowNull: false,
-        get() {
-            const val = this.getDataValue("tags");
-            return val ? JSON.parse(val) : [];
-        },
-        set(val) {
-            this.setDataValue("tags", JSON.stringify(val));
-        }
+    price: {
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
     discount: {
         type: DataTypes.FLOAT,
         defaultValue: 0,
         allowNull: false,
     },
+    stock: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+    },
     available: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        defaultValue: false,
         allowNull: false
     }
 }, { timestamps: false })

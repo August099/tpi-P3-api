@@ -12,8 +12,9 @@ export const User = sequelize.define("user", {
         allowNull: false
     },
     email: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     password: {
         type: DataTypes.TEXT,
@@ -21,16 +22,8 @@ export const User = sequelize.define("user", {
     },
     preferences: {
         type: DataTypes.TEXT,
-        defaultValue: "{}",
+        defaultValue: JSON.stringify({ language: "es", theme: "light" }),
         allowNull: false,
-        validate: {
-            isObject(value) {
-                const parsed = JSON.parse(value);
-                if (typeof parsed !== "object" || Array.isArray(parsed) || parsed === null) {
-                    throw new Error("Preferences debe ser un objeto");
-                }
-            }
-        },
         get() {
             const val = this.getDataValue("preferences");
             return val ? JSON.parse(val) : {};

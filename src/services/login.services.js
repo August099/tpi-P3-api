@@ -4,10 +4,10 @@ import jwt from "jsonwebtoken";
 import { validateLoginUser } from "../helpers/userValidation.js";
 
 export const loginUser = async (req, res) => {
-  const result = validateLoginUser(req.body);
+  const errors = validateLoginUser(req.body);
 
-  if (Object.keys(result).length != 0) {
-    return res.status(400).send({ errors: result });
+  if (Object.keys(errors).length != 0) {
+    return res.status(400).send(errors);
   }
 
   const { email, password } = req.body;
@@ -18,17 +18,21 @@ export const loginUser = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(401).send({ message: "Usuario no existente" });
+    return res.status(401).send({ errors: {userError: "Usuario no existente"} });
   }
   const comparison = await bcrypt.compare(password, user.password);
 
   if (!comparison) {
-    return res.status(401).send({ message: "Email y/o contraseña incorrecta" });
+    return res.status(401).send({ errors: {userError: "Email y/o contraseña incorrecta"} });
   }
 
   const secretKey = "contraseniarandom";
-
-  const token = jwt.sign({ email }, secretKey, { expiresIn: "1h" });
+  
+  const token = jwt.sign({
+    id: user.id,
+    name: user.name,
+    email: user.email
+  }, secretKey, { expiresIn: "1d" });
 
   return res.json(token);
 };

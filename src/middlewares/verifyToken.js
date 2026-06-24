@@ -11,7 +11,7 @@ export const verifyToken = (req, res, next) => {
 
   try {
     const payload = jwt.verify(token, "contraseniarandom");
-    console.log(payload);
+    req.user = payload;
     next();
   } catch (error) {
     return res.status(403).json({ message: "No posee permisos correctos" });
