@@ -9,14 +9,14 @@ export const registerUser = async (req, res) => {
     return res.status(400).send(errors);
   }
   
-  const { name, email, password } = req.body;
-
+  const { name, email, password, role } = req.body;
+  
   const user = await User.findOne({
     where: {
       email,
     },
   });
-
+  
   if (user) {
     return res.status(400).send({ errors: {userError: "Usuario existente"} });
   }
@@ -29,8 +29,9 @@ export const registerUser = async (req, res) => {
   const newUser = await User.create({
     name,
     email,
-    password: hashedPassword
+    password: hashedPassword,
+    role: role ? role : "User"
   });
 
-  res.json(newUser.id);
+  res.json(newUser);
 };

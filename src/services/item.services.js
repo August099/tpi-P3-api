@@ -43,7 +43,9 @@ export const createItem = async (req, res) => {
     await newItem.setCategories(categories)
   }
 
-  res.json(newItem);
+  const updatedItem = await Item.findByPk(newItem.id, { include: Category });
+
+  res.json(updatedItem);
 };
 
 export const updateItem = async (req, res) => {
@@ -76,7 +78,32 @@ export const updateItem = async (req, res) => {
     await item.setCategories(categories)
   }
 
-  res.json(item);
+  const updatedItem = await Item.findByPk(id, { include: Category });
+
+  res.json(updatedItem);
+};
+
+export const updateStock = async (req, res) => {
+  const { id } = req.params;
+  const { stock } = req.body;
+
+  if (stock < 0) {
+    return res.status(404).send({ errors: {stock: "El stock no puede ser negativo."} });
+  }
+
+  const item = await Item.findByPk(id);
+
+  if (!item) {
+    return res.status(404).send({ errors: {itemError: "Producto no encontrado"} });
+  }
+
+  await item.update({ 
+    stock
+  });
+
+  const updatedItem = await Item.findByPk(id);
+
+  res.json(updatedItem);
 };
 
 export const deleteItem = async (req, res) => {
@@ -89,10 +116,9 @@ export const deleteItem = async (req, res) => {
 
   try {
     await item.destroy();
-    res.send(`Producto con id ${id} eliminado`);
+    res.send(id);
   } catch (error) {
-    console.error(error); // 👈 esto te va a mostrar el mensaje real
-    res.status(500).json({ message: "Error al eliminar el producto" });
+    res.status(500).json({ errors: {itemError: "Error al eliminar el producto"} });
   }
 };
 
@@ -166,18 +192,20 @@ export const updateCategory = async (req, res) => {
 
   await category.update({ name });
 
-  res.json(category);
+  const updatedCategory = await Category.findByPk(id);
+
+  res.json(updatedCategory);
 };
 
 export const deleteCategory = async (req, res) => {
-  const { name } = req.params;
+  const { id } = req.params;
 
-  const category = await Category.findOne({where: {name}});
+  const category = await Category.findByPk(id);
 
   if (!category) {
     return res.status(404).json({ errors: {category: "La categoria no existe."} });
   }
 
   await category.destroy();
-  res.json("Categoría eliminada correctamente");
+  res.json(id);
 };

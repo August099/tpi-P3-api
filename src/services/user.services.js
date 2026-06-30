@@ -1,29 +1,5 @@
 import { User } from "../models/User.js";
-import { validateEmail, validatePreferences } from "../helpers/userValidation.js";
-
-export const getUserRole = async (req, res) => {
-    const id = req.user.id
-
-    const user = await User.findByPk(id)
-
-    if (!user) {
-        return res.status(404).json({ errors: {userError: "Usuario no encontrado"} });
-    }
-
-    res.json(user.role)
-}
-
-export const getPreferences = async (req, res) => {
-    const id = req.user.id
-
-    const user = await User.findByPk(id)
-
-    if (!user) {
-        return res.status(404).json({ errors: {userError: "Usuario no encontrado"} });
-    }
-
-    res.json(user.preferences)
-}
+import { validateEmail, validateString, validatePassword } from "../helpers/userValidation.js";
 
 export const setUserRole = async (req, res) => {
     const { email, role } = req.body;
@@ -43,25 +19,29 @@ export const setUserRole = async (req, res) => {
     }
 
     await user.update({ role });
+
+    const updatedUser = await User.findOne({where:{email}, attributes: ["id", "name", "email", "role"]})
     
-    res.json("Rol de usuario actualizado.");
+    res.json(updatedUser)
 }
 
-export const updatePreferences = async (req, res) => {
-    const id = req.user.id
-    const { preferences } = req.body
+export const getUsers = async (req, res) => {
+    const users = await User.findAll({attributes: ["id", "name", "email", "role"]})
+    res.json(users)
+}
 
-    const user = await User.findByPk(id)
+export const removeUser = async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
 
     if (!user) {
-        return res.status(404).json({ errors: {userError: "Usuario no encontrado"} });
+    return res.status(404).send({ errors: {userError: "Producto no encontrado"} });
     }
 
-    if (!validatePreferences(preferences)) {
-        return res.status(404).json({ errors: {userError: "Error al actualizar las preferencias."} });
+    try {
+        await user.destroy();
+        res.send(id);
+    } catch (error) {
+        res.status(500).json({ errors: {userError: "Error al eliminar el usuario"} });
     }
-
-    await user.update({preferences})
-
-    res.json("Preferencias actualizadas.")
 }

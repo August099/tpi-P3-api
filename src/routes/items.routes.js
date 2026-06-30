@@ -9,7 +9,8 @@ import {
   getCategories,
   createCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  updateStock
 } from "../services/item.services.js";
 import { verifyToken, verifyAdmin } from "../middlewares/auth.middleware.js";
 
@@ -19,12 +20,13 @@ router.get("/categories", verifyToken, getCategories);
 
 router.post("/categories", verifyToken, verifyAdmin, createCategory);
 router.put("/categories/:id", verifyToken, verifyAdmin, updateCategory);
-router.delete("/categories/:name", verifyToken, verifyAdmin, deleteCategory);
+router.delete("/categories/:id", verifyToken, verifyAdmin, deleteCategory);
 
 router.get("/items", verifyToken, findItems);
 router.get("/items/:id", verifyToken, findItem);
 
 router.post("/items", verifyToken, verifyAdmin, createItem);
+router.put("/items/stock/:id", verifyToken, updateStock);
 router.put("/items/:id", verifyToken, verifyAdmin, updateItem);
 router.delete("/items/:id", verifyToken, verifyAdmin, deleteItem);
 

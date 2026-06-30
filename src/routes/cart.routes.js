@@ -15,7 +15,7 @@ router.get("/cart", verifyToken, getCart);
 router.post("/cart/items", verifyToken, addItemToCart);
 router.patch("/cart/items/:itemId/increment", verifyToken, incrementQuantity);
 router.patch("/cart/items/:itemId/decrement", verifyToken, decrementQuantity);
-router.delete("/cart/items/:itemId", verifyToken, verifyAdmin, removeItemFromCart);
-router.delete("/cart", verifyToken, verifyAdmin, cleanCart);
+router.delete("/cart/items/:itemId", verifyToken, removeItemFromCart);
+router.delete("/cart", verifyToken, cleanCart);
 
 export default router

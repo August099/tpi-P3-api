@@ -13,14 +13,6 @@ export const validateEmail = (email) => {
     return emailRegex.test(email);
 };
 
-export const validatePreferences = (preferences) => {
-    if (typeof preferences !== "object" || Array.isArray(preferences) || preferences === null) {
-        return false
-    }
-
-    return true
-}
-
 export const validatePassword = (
 password,
 minLenght,

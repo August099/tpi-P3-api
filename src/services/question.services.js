@@ -35,7 +35,13 @@ export const createQuestion = async (req, res) => {
   }
 
   const newQuestion = await Question.create({ itemId, userId, question });
-  res.json(newQuestion);
+
+  const newQuestionUser = await Question.findByPk(
+    newQuestion.id,
+    {include: { model: User, attributes: ["id", "email", "name"] }}
+  );
+
+  res.json(newQuestionUser);
 };
 
 export const answerQuestion = async (req, res) => {
@@ -53,7 +59,13 @@ export const answerQuestion = async (req, res) => {
   }
 
   await question.update({ answer });
-  res.json(question);
+
+  const updatedQuestion = await Question.findByPk(
+    question.id,
+    {include: { model: User, attributes: ["id", "email", "name"] }}
+  );
+
+  res.json(updatedQuestion);
 };
 
 export const deleteQuestion = async (req, res) => {
@@ -78,5 +90,5 @@ export const deleteQuestion = async (req, res) => {
 
   await question.destroy();
   
-  res.json("Pregunta eliminada correctamente");
+  res.json(id);
 };

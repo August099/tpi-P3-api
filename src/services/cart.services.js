@@ -8,13 +8,13 @@ export const getCart = async (req, res) => {
     const cart = await Cart.findOne({
         where: { userId },
         include: {
-        model: CartItem,
-        include: Item
+            model: CartItem,
+            include: Item
         }
     });
 
     if (!cart) {
-        return res.status(404).json({ errors: { cartError: "Carrito no encontrado" }});
+        res.json({});
     }
 
     res.json(cart);
@@ -26,6 +26,12 @@ export const addItemToCart = async (req, res) => {
 
     if (!quantity || quantity <= 0) {
         return res.status(404).json({ errors: {cartError: "El campo cantidad no puede estar vacio y debe ser positivo."} });
+    }
+    console.log(itemId)
+    const item = Item.findByPk(itemId)
+
+    if (!item) {
+        return res.status(404).json({ errors: {cartError: "Item invalido."} });
     }
 
     let cart = await Cart.findOne({ where: { userId } });
@@ -54,6 +60,12 @@ export const incrementQuantity = async (req, res) => {
 
   if (!cartItem) {
     return res.status(404).json({ errors: {cartError: "Item no encontrado en el carrito."} });
+  }
+
+  const item = await Item.findByPk(itemId)
+
+  if (cartItem.quantity >= item.stock) {
+    return res.status(404).json({ errors: {cartError: "No hay mas stock."} });
   }
 
   await cartItem.increment("quantity", { by: 1 });
